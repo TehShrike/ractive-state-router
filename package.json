@@ -1,0 +1,27 @@
+{
+  "name": "ractive-state-router",
+  "version": "1.0.0",
+  "description": "A RactiveJS-based rendering layer for the abstract-state-router",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:TehShrike/ractive-state-router.git"
+  },
+  "keywords": [
+    "ractive",
+    "state-router"
+  ],
+  "author": "TehShrike",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/TehShrike/ractive-state-router/issues"
+  },
+  "homepage": "https://github.com/TehShrike/ractive-state-router",
+  "dependencies": {
+    "abstract-state-router": "^1.0.0",
+    "ractive": "^0.6.1"
+  }
+}
