@@ -47,7 +47,7 @@ stateRouter.addState({
 		var words = ['louder', 'prettier', 'headier']
 
 		function update() {
-			var index = Math.round(Math.random() * 5)
+			var index = Math.round(Math.random() * 2)
 			ractive.set('somethinger', words[index])
 		}
 
