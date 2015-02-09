@@ -1,5 +1,13 @@
 var Ractive = require('ractive')
 
+function wrapWackyPromise(promise, cb) {
+	promise.then(function() {
+		cb()
+	}, function(err) {
+		cb(err)
+	})
+}
+
 module.exports = {
 	render: function render(element, template, cb) {
 		try {
@@ -13,20 +21,10 @@ module.exports = {
 		}
 	},
 	reset: function reset(ractive, cb) {
-		try {
-			ractive.reset()
-			cb()
-		} catch (e) {
-			cb(e)
-		}
+		wrapWackyPromise(ractive.reset(), cb)
 	},
 	destroy: function destroy(ractive, cb) {
-		try {
-			ractive.teardown()
-			cb()
-		} catch (e) {
-			cb(e)
-		}
+		wrapWackyPromise(ractive.teardown(), cb)
 	},
 	getChildElement: function getChildElement(ractive, cb) {
 		try {

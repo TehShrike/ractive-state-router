@@ -2,7 +2,7 @@
   "name": "ractive-state-router",
   "version": "1.0.0",
   "description": "A RactiveJS-based rendering layer for the abstract-state-router",
-  "main": "index.js",
+  "main": "render.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/TehShrike/ractive-state-router",
   "dependencies": {
-    "abstract-state-router": "^1.0.0",
     "ractive": "^0.6.1"
   }
 }
