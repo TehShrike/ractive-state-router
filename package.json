@@ -4,7 +4,7 @@
   "description": "A RactiveJS-based rendering layer for the abstract-state-router",
   "main": "render.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node render.js"
   },
   "repository": {
     "type": "git",
