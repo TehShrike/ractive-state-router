@@ -33,5 +33,8 @@ module.exports = {
 		} catch (e) {
 			cb(e)
 		}
+	},
+	setUpMakePathFunction: function setUpMakePathFunction(makePath) {
+		Ractive.defaults.data.makePath = makePath
 	}
 }
