@@ -9,15 +9,12 @@ function wrapWackyPromise(promise, cb) {
 }
 
 module.exports = function RactiveStateRouter(options) {
-	options = options || {}
-	Ractive.defaults = options.defaults
-	Ractive.easing = options.easing
-	Ractive.partials = options.partials
+	var ExtendedRactive = Ractive.extend(options || {})
 
 	return {
 		render: function render(element, template, cb) {
 			try {
-				var ractive = new Ractive({
+				var ractive = new ExtendedRactive({
 					el: element,
 					template: template
 				})

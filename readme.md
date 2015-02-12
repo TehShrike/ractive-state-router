@@ -18,8 +18,14 @@ domready(function() {
 
 ## ractiveRenderer([options])
 
-`options` is an optional object:
+`options` is an object that is passed into [Ractive.extend](http://docs.ractivejs.org/latest/ractive-extend) and takes [Ractive's options](http://docs.ractivejs.org/latest/options).
 
-- [Ractive.defaults](http://docs.ractivejs.org/latest/ractive-defaults) is set to `options.defaults`.
-- [Ractive.easing](http://docs.ractivejs.org/latest/ractive-easing) is set to `options.easing`.
-- [Ractive.partials](http://docs.ractivejs.org/latest/ractive-partials-global) is set to `options.partials`.
+```js
+var StateRouter = require('abstract-state-router')
+var RactiveRenderer = require('ractive-state-router')
+
+var renderer = RactiveRenderer({
+	data: { hello: 'world' }
+})
+var stateRouter = StateRouter(renderer, 'body')
+```
