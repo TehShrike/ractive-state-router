@@ -38,7 +38,12 @@ module.exports = function RactiveStateRouter(options) {
 			}
 		},
 		setUpMakePathFunction: function setUpMakePathFunction(makePath) {
-			Ractive.defaults.data.makePath = makePath
+			ExtendedRactive.defaults.data.makePath = Ractive.defaults.data.makePath = makePath
+		},
+		setUpStateIsActiveFunction: function setUpStateIsActiveFunction(stateIsActive) {
+			ExtendedRactive.defaults.data.active = Ractive.defaults.data.active = function(stateName) {
+				return stateIsActive(stateName) ? 'active' : ''
+			}
 		}
 	}
 }
