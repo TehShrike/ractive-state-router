@@ -10,13 +10,17 @@ function wrapWackyPromise(promise, cb) {
 
 module.exports = function RactiveStateRouter(options) {
 	var ExtendedRactive = Ractive.extend(options || {})
+	var stateRouter = null
 
 	return {
 		render: function render(element, template, cb) {
 			try {
 				var ractive = new ExtendedRactive({
 					el: element,
-					template: template
+					template: template,
+					decorators: {
+						active: activeStateDecarator.bind(null, stateRouter)
+					}
 				})
 				cb(null, ractive)
 			} catch (e) {
@@ -44,6 +48,51 @@ module.exports = function RactiveStateRouter(options) {
 			ExtendedRactive.defaults.data.active = Ractive.defaults.data.active = function(stateName) {
 				return stateIsActive(stateName) ? 'active' : ''
 			}
+		},
+		handleStateRouter: function handleStateRouter(newStateRouter) {
+			stateRouter = newStateRouter
 		}
 	}
+}
+
+function activeStateDecarator(stateRouter, element, stateName) {
+	var parametersToMatch = parseParameters(arguments)
+	function onStateChange(toState, toParams) {
+		var currentName = toState.name
+		var active = currentName.indexOf(stateName) === 0 && allParametersMatch(parametersToMatch, toParams)
+
+		if (active) {
+			element.classList.add('active')
+		} else {
+			element.classList.remove('active')
+		}
+
+	}
+
+	stateRouter.on('stateChangeEnd', onStateChange)
+
+	function teardown() {
+		stateRouter.removeListener('stateChangeEnd', onStateChange)
+	}
+
+	return {
+		teardown: teardown
+	}
+}
+
+function parseParameters(args) {
+	args = Array.prototype.slice.call(args, 2)
+	return args.reduce(function(allParameters, parameterPair) {
+		var keyAndValue = parameterPair.split(':')
+		if (keyAndValue.length > 1) {
+			allParameters[keyAndValue[0]] = keyAndValue[1]
+		}
+		return allParameters
+	}, {})
+}
+
+function allParametersMatch(toMatch, parameters) {
+	return Object.keys(toMatch).every(function(key) {
+		return toMatch[key] == parameters[key]
+	})
 }
