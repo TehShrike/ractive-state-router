@@ -28,6 +28,7 @@ module.exports = function RactiveStateRouter(options) {
 			}
 		},
 		reset: function reset(ractive, cb) {
+			ractive.off()
 			wrapWackyPromise(ractive.reset(), cb)
 		},
 		destroy: function destroy(ractive, cb) {
