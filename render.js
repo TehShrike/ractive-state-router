@@ -13,23 +13,27 @@ module.exports = function RactiveStateRouter(options) {
 	var stateRouter = null
 
 	return {
-		render: function render(element, template, cb) {
+		render: function render(context, cb) {
+			var element = context.element
+			var template = context.template
 			try {
 				var ractive = new ExtendedRactive({
 					el: element,
 					template: template,
 					decorators: {
 						active: activeStateDecarator.bind(null, stateRouter)
-					}
+					},
+					data: context.content
 				})
 				cb(null, ractive)
 			} catch (e) {
 				cb(e)
 			}
 		},
-		reset: function reset(ractive, cb) {
+		reset: function reset(context, cb) {
+			var ractive = context.domApi
 			ractive.off()
-			wrapWackyPromise(ractive.reset(), cb)
+			wrapWackyPromise(ractive.reset(context.content), cb)
 		},
 		destroy: function destroy(ractive, cb) {
 			wrapWackyPromise(ractive.teardown(), cb)
