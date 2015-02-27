@@ -9,11 +9,11 @@ function wrapWackyPromise(promise, cb) {
 }
 
 module.exports = function RactiveStateRouter(options) {
-	var ExtendedRactive = Ractive.extend(options || {})
-	var extendedData = ExtendedRactive.defaults.data
-	var ractiveData = Ractive.defaults.data
-
 	return function makeRenderer(stateRouter) {
+		var ExtendedRactive = Ractive.extend(options || {})
+		var extendedData = ExtendedRactive.defaults.data
+		var ractiveData = Ractive.defaults.data
+
 		extendedData.makePath = ractiveData.makePath = stateRouter.makePath
 
 		extendedData.active = ractiveData.active = function active(stateName) {
