@@ -10,7 +10,16 @@ function wrapWackyPromise(promise, cb) {
 
 module.exports = function RactiveStateRouter(options) {
 	var ExtendedRactive = Ractive.extend(options || {})
-	return function (stateRouter) {
+	var extendedData = ExtendedRactive.defaults.data
+	var ractiveData = Ractive.defaults.data
+
+	return function makeRenderer(stateRouter) {
+		extendedData.makePath = ractiveData.makePath = stateRouter.makePath
+
+		extendedData.active = ractiveData.active = function active(stateName) {
+			return stateRouter.stateIsActive(stateName) ? 'active' : ''
+		}
+
 		return {
 			render: function render(context, cb) {
 				var element = context.element
@@ -43,14 +52,6 @@ module.exports = function RactiveStateRouter(options) {
 					cb(null, child)
 				} catch (e) {
 					cb(e)
-				}
-			},
-			setUpMakePathFunction: function setUpMakePathFunction(makePath) {
-				ExtendedRactive.defaults.data.makePath = Ractive.defaults.data.makePath = makePath
-			},
-			setUpStateIsActiveFunction: function setUpStateIsActiveFunction(stateIsActive) {
-				ExtendedRactive.defaults.data.active = Ractive.defaults.data.active = function(stateName) {
-					return stateIsActive(stateName) ? 'active' : ''
 				}
 			}
 		}
