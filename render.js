@@ -10,52 +10,50 @@ function wrapWackyPromise(promise, cb) {
 
 module.exports = function RactiveStateRouter(options) {
 	var ExtendedRactive = Ractive.extend(options || {})
-	var stateRouter = null
+	var extendedData = ExtendedRactive.defaults.data
+	var ractiveData = Ractive.defaults.data
 
-	return {
-		render: function render(context, cb) {
-			var element = context.element
-			var template = context.template
-			try {
-				var ractive = new ExtendedRactive({
-					el: element,
-					template: template,
-					decorators: {
-						active: activeStateDecarator.bind(null, stateRouter)
-					},
-					data: context.content
-				})
-				cb(null, ractive)
-			} catch (e) {
-				cb(e)
+	return function makeRenderer(stateRouter) {
+		extendedData.makePath = ractiveData.makePath = stateRouter.makePath
+
+		extendedData.active = ractiveData.active = function active(stateName) {
+			return stateRouter.stateIsActive(stateName) ? 'active' : ''
+		}
+
+		return {
+			render: function render(context, cb) {
+				var element = context.element
+				var template = context.template
+				try {
+					var ractive = new ExtendedRactive({
+						el: element,
+						template: template,
+						decorators: {
+							active: activeStateDecarator.bind(null, stateRouter)
+						},
+						data: context.content
+					})
+					cb(null, ractive)
+				} catch (e) {
+					cb(e)
+				}
+			},
+			reset: function reset(context, cb) {
+				var ractive = context.domApi
+				ractive.off()
+				wrapWackyPromise(ractive.reset(context.content), cb)
+			},
+			destroy: function destroy(ractive, cb) {
+				wrapWackyPromise(ractive.teardown(), cb)
+			},
+			getChildElement: function getChildElement(ractive, cb) {
+				try {
+					var child = ractive.find('ui-view')
+					cb(null, child)
+				} catch (e) {
+					cb(e)
+				}
 			}
-		},
-		reset: function reset(context, cb) {
-			var ractive = context.domApi
-			ractive.off()
-			wrapWackyPromise(ractive.reset(context.content), cb)
-		},
-		destroy: function destroy(ractive, cb) {
-			wrapWackyPromise(ractive.teardown(), cb)
-		},
-		getChildElement: function getChildElement(ractive, cb) {
-			try {
-				var child = ractive.find('ui-view')
-				cb(null, child)
-			} catch (e) {
-				cb(e)
-			}
-		},
-		setUpMakePathFunction: function setUpMakePathFunction(makePath) {
-			ExtendedRactive.defaults.data.makePath = Ractive.defaults.data.makePath = makePath
-		},
-		setUpStateIsActiveFunction: function setUpStateIsActiveFunction(stateIsActive) {
-			ExtendedRactive.defaults.data.active = Ractive.defaults.data.active = function(stateName) {
-				return stateIsActive(stateName) ? 'active' : ''
-			}
-		},
-		handleStateRouter: function handleStateRouter(newStateRouter) {
-			stateRouter = newStateRouter
 		}
 	}
 }
