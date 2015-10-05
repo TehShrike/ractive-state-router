@@ -1,4 +1,5 @@
 var Ractive = require('ractive')
+Ractive.DEBUG = false
 
 function wrapWackyPromise(promise, cb) {
 	promise.then(function() {
