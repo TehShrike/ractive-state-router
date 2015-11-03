@@ -1,4 +1,5 @@
 var Ractive = require('ractive')
+var extend = require('xtend')
 
 function wrapWackyPromise(promise, cb) {
 	promise.then(function() {
@@ -23,16 +24,30 @@ module.exports = function RactiveStateRouter(options) {
 		return {
 			render: function render(context, cb) {
 				var element = context.element
-				var template = context.template
-				try {
-					var ractive = new ExtendedRactive({
-						el: element,
-						template: template,
-						decorators: {
-							active: activeStateDecarator.bind(null, stateRouter)
-						},
-						data: context.content
+				var inputTemplate = context.template
+
+				var defaultDecorators = {
+					active: activeStateDecarator.bind(null, stateRouter)
+				}
+
+				function getData() {
+					return isTemplate(inputTemplate) ? context.content : extend(inputTemplate.data, context.content)
+				}
+				function getDecorators() {
+					return isTemplate(inputTemplate) ? defaultDecorators : extend(defaultDecorators, inputTemplate.decorators)
+				}
+				function getOptions() {
+					var bareOptions = isTemplate(inputTemplate) ? { template: inputTemplate } : inputTemplate
+
+					return extend(bareOptions, {
+						decorators: getDecorators(),
+						data: getData(),
+						el: element
 					})
+				}
+
+				try {
+					var ractive = new ExtendedRactive(getOptions())
 					cb(null, ractive)
 				} catch (e) {
 					cb(e)
@@ -98,4 +113,13 @@ function allParametersMatch(toMatch, parameters) {
 	return Object.keys(toMatch).every(function(key) {
 		return toMatch[key] == parameters[key]
 	})
+}
+
+function isTemplate(inputTemplate) {
+	return typeof inputTemplate === 'string' || isRactiveTemplateObject(inputTemplate)
+}
+
+function isRactiveTemplateObject(template) {
+	// Based on https://github.com/ractivejs/ractive/blob/b1c9e1e5c22daac3210ee7db0f511065b31aac3c/src/Ractive/config/custom/template/template.js#L113-L116
+	return template && typeof template.v === 'number'
 }
