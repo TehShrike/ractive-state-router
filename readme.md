@@ -4,7 +4,8 @@ Use [Ractive](http://www.ractivejs.org/) with [abstract-state-router](https://gi
 
 ```js
 var StateRouter = require('abstract-state-router')
-var ractiveRenderer = require('ractive-state-router')()
+var Ractive = require('ractive')
+var ractiveRenderer = require('ractive-state-router')(Ractive)
 var domready = require('domready')
 
 var stateRouter = StateRouter(ractiveRenderer, 'body')
@@ -16,15 +17,16 @@ domready(function() {
 })
 ```
 
-## ractiveRenderer([options])
+## ractiveRenderer(Ractive, [options])
 
 `options` is an object that is passed into [Ractive.extend](http://docs.ractivejs.org/latest/ractive-extend) and takes [Ractive's options](http://docs.ractivejs.org/latest/options).
 
 ```js
 var StateRouter = require('abstract-state-router')
+var Ractive = require('ractive')
 var RactiveRenderer = require('ractive-state-router')
 
-var renderer = RactiveRenderer({
+var renderer = RactiveRenderer(Ractive, {
 	data: { hello: 'world' }
 })
 var stateRouter = StateRouter(renderer, 'body')

@@ -1,4 +1,3 @@
-var Ractive = require('ractive')
 var extend = require('xtend')
 
 function wrapWackyPromise(promise, cb) {
@@ -9,7 +8,7 @@ function wrapWackyPromise(promise, cb) {
 	})
 }
 
-module.exports = function RactiveStateRouter(options) {
+module.exports = function RactiveStateRouter(Ractive, options) {
 	return function makeRenderer(stateRouter) {
 		var ExtendedRactive = Ractive.extend(options || {})
 		var extendedData = ExtendedRactive.defaults.data

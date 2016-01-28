@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/TehShrike/ractive-state-router",
   "dependencies": {
-    "ractive": "^0.7.0",
     "xtend": "4.0.1"
   }
 }
