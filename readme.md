@@ -1,5 +1,15 @@
 Use [Ractive](http://www.ractivejs.org/) with [abstract-state-router](https://github.com/TehShrike/abstract-state-router)!
 
+## Install
+
+npm + your favorite CommonJS bundler is easiest.
+
+```sh
+npm install ractive-state-router
+```
+
+You can also [download the stand-alone build from wzrd.in](https://wzrd.in/standalone/ractive-state-router@latest).  If you include it in a `<script>` tag, a `ractiveStateRouter` function will be available on the global scope.
+
 ## Usage
 
 ```js
