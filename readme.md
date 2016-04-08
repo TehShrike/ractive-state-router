@@ -42,6 +42,18 @@ var renderer = RactiveRenderer(Ractive, {
 var stateRouter = StateRouter(renderer, 'body')
 ```
 
+## In templates
+
+The `active` decorator adds the `active` class to an element if the given state is currently active.
+
+The `makePath` function [from the abstract-state-router](https://github.com/TehShrike/abstract-state-router#stateroutermakepathstatename-stateparameters-options) is also exposed.
+
+```html
+<li decorator="active:app.some-state">
+	<a href="{{ makePath('app.some-state') }}">Some state</a>
+</li>
+```
+
 ## Passing templates to `addState`
 
 When calling the abstract-state-router's addState function, you may provide any of these values as the `template`:
