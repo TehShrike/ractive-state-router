@@ -5,10 +5,12 @@ Use [Ractive](http://www.ractivejs.org/) with [abstract-state-router](https://gi
 ```js
 var StateRouter = require('abstract-state-router')
 var Ractive = require('ractive')
-var ractiveRenderer = require('ractive-state-router')(Ractive)
+var makeRactiveStateRenderer = require('ractive-state-router')
 var domready = require('domready')
 
-var stateRouter = StateRouter(ractiveRenderer, 'body')
+var renderer = makeRactiveStateRenderer(Ractive)
+
+var stateRouter = StateRouter(renderer, 'body')
 
 // add whatever states to the state router
 
@@ -17,9 +19,11 @@ domready(function() {
 })
 ```
 
-## ractiveRenderer(Ractive, [options])
+## makeRactiveStateRenderer(Ractive, [ractiveOptions, [options]])
 
-`options` is an object that is passed into [Ractive.extend](http://docs.ractivejs.org/latest/ractive-extend) and takes [Ractive's options](http://docs.ractivejs.org/latest/options).
+`ractiveOptions` is an object that is passed into [Ractive.extend](http://docs.ractivejs.org/latest/ractive-extend) and takes [Ractive's options](http://docs.ractivejs.org/latest/options).
+
+`options` is an object with one optional property: `deepCopyDataOnSet` (defaults to `false`).  When `true`, the content from the resolve function will be deep copied before being set on the Ractive object, in order to try to maintain the immutability of whatever objects you pass in.
 
 ```js
 var StateRouter = require('abstract-state-router')

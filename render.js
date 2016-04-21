@@ -8,9 +8,16 @@ function wrapWackyPromise(promise, cb) {
 	})
 }
 
-module.exports = function RactiveStateRouter(Ractive, options) {
+module.exports = function RactiveStateRouter(Ractive, ractiveOptions, options) {
+	function copyIfAppropriate(value) {
+		if (options && options.deepCopyDataOnSet) {
+			return copy(value)
+		} else {
+			return value
+		}
+	}
 	return function makeRenderer(stateRouter) {
-		var ExtendedRactive = Ractive.extend(options || {})
+		var ExtendedRactive = Ractive.extend(ractiveOptions || {})
 		var extendedData = ExtendedRactive.defaults.data
 		var ractiveData = Ractive.defaults.data
 
@@ -30,7 +37,8 @@ module.exports = function RactiveStateRouter(Ractive, options) {
 				}
 
 				function getData() {
-					return isTemplate(inputTemplate) ? context.content : extend(inputTemplate.data, context.content)
+					var copyOfContent = copyIfAppropriate(context.content)
+					return isTemplate(inputTemplate) ? copyOfContent : extend(inputTemplate.data, copyOfContent)
 				}
 				function getDecorators() {
 					return isTemplate(inputTemplate) ? defaultDecorators : extend(defaultDecorators, inputTemplate.decorators)
@@ -55,7 +63,7 @@ module.exports = function RactiveStateRouter(Ractive, options) {
 			reset: function reset(context, cb) {
 				var ractive = context.domApi
 				ractive.off()
-				wrapWackyPromise(ractive.reset(context.content), cb)
+				wrapWackyPromise(ractive.reset(copyIfAppropriate(context.content)), cb)
 			},
 			destroy: function destroy(ractive, cb) {
 				wrapWackyPromise(ractive.teardown(), cb)
@@ -70,6 +78,22 @@ module.exports = function RactiveStateRouter(Ractive, options) {
 			}
 		}
 	}
+}
+
+function copy(value) {
+	if (Array.isArray(value)) {
+		return value.map(copy)
+	} else if (object(value)) {
+		var target = {}
+		Object.keys(value).forEach(key => target[key] = copy(value[key]))
+		return target
+	} else {
+		return value
+	}
+}
+
+function object(o) {
+	return o && typeof o === 'object'
 }
 
 function activeStateDecarator(stateRouter, element, stateName) {
