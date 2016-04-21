@@ -1,5 +1,15 @@
 Use [Ractive](http://www.ractivejs.org/) with [abstract-state-router](https://github.com/TehShrike/abstract-state-router)!
 
+## Install
+
+npm + your favorite CommonJS bundler is easiest.
+
+```sh
+npm install ractive-state-router
+```
+
+You can also [download the stand-alone build from wzrd.in](https://wzrd.in/standalone/ractive-state-router@latest).  If you include it in a `<script>` tag, a `ractiveStateRouter` function will be available on the global scope.
+
 ## Usage
 
 ```js
@@ -34,6 +44,18 @@ var renderer = RactiveRenderer(Ractive, {
 	data: { hello: 'world' }
 })
 var stateRouter = StateRouter(renderer, 'body')
+```
+
+## In templates
+
+The `active` decorator adds the `active` class to an element if the given state is currently active.
+
+The `makePath` function [from the abstract-state-router](https://github.com/TehShrike/abstract-state-router#stateroutermakepathstatename-stateparameters-options) is also exposed.
+
+```html
+<li decorator="active:app.some-state">
+	<a href="{{ makePath('app.some-state') }}">Some state</a>
+</li>
 ```
 
 ## Passing templates to `addState`
