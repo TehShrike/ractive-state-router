@@ -85,7 +85,9 @@ function copy(value) {
 		return value.map(copy)
 	} else if (object(value)) {
 		var target = {}
-		Object.keys(value).forEach(key => target[key] = copy(value[key]))
+		Object.keys(value).forEach(function(key) {
+			target[key] = copy(value[key])
+		})
 		return target
 	} else {
 		return value
