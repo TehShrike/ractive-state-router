@@ -99,8 +99,9 @@ function object(o) {
 }
 
 function activeStateDecarator(stateRouter, element, stateName) {
+	var parametersToMatch = parseParameters(arguments)
 	function onStateChange() {
-		var active = stateRouter.stateIsActive(stateName)
+		var active = stateRouter.stateIsActive(stateName, parametersToMatch)
 
 		if (active) {
 			element.classList.add('active')
