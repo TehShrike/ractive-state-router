@@ -149,12 +149,6 @@ function parseParameters(args) {
 	}, {})
 }
 
-function allParametersMatch(toMatch, parameters) {
-	return Object.keys(toMatch).every(function(key) {
-		return toMatch[key] == parameters[key]
-	})
-}
-
 function isTemplate(inputTemplate) {
 	return typeof inputTemplate === 'string' || isRactiveTemplateObject(inputTemplate)
 }
