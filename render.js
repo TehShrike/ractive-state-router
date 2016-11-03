@@ -1,5 +1,7 @@
 var extend = require('xtend')
 
+var UPDATE_ROUTE_KEY = 'update_route'
+
 function wrapWackyPromise(promise, cb) {
 	promise.then(function() {
 		cb()
@@ -21,9 +23,23 @@ module.exports = function RactiveStateRouter(Ractive, ractiveOptions, options) {
 		var extendedData = ExtendedRactive.defaults.data
 		var ractiveData = Ractive.defaults.data
 
-		extendedData.makePath = ractiveData.makePath = stateRouter.makePath
+		const globalData = {}
+		globalData[UPDATE_ROUTE_KEY] = {}
+		var globalRactive = new Ractive({
+			data: globalData
+		})
+
+		stateRouter.on('stateChangeEnd', function() {
+			globalRactive.update(UPDATE_ROUTE_KEY)
+		})
+
+		extendedData.makePath = ractiveData.makePath = function makePath() {
+			globalRactive.get(UPDATE_ROUTE_KEY)
+			return stateRouter.makePath.apply(null, arguments)
+		}
 
 		extendedData.active = ractiveData.active = function active(stateName) {
+			globalRactive.get(UPDATE_ROUTE_KEY)
 			return stateRouter.stateIsActive(stateName) ? 'active' : ''
 		}
 
