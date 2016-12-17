@@ -10,6 +10,10 @@ npm install ractive-state-router
 
 You can also [download the stand-alone build from wzrd.in](https://wzrd.in/standalone/ractive-state-router@latest).  If you include it in a `<script>` tag, a `ractiveStateRouter` function will be available on the global scope.
 
+## Breaking changes
+
+In version 7, the "active state" decorator changed from taking a string of state name/options to be parsed apart, to taking the state name, options object, and an optional class name.
+
 ## Usage
 
 ```js
@@ -48,12 +52,12 @@ var stateRouter = StateRouter(renderer, 'body')
 
 ## In templates
 
-The `active` decorator adds the `active` class to an element if the given state is currently active.
+The `active` decorator adds the `active` class to an element if the given state is currently active.  It takes three arguments: a state name (string), an optional parameters object, and a class name to be applied to the element if the state is active (defaults to `'active'`).
 
 The `makePath` function [from the abstract-state-router](https://github.com/TehShrike/abstract-state-router#stateroutermakepathstatename-stateparameters-options) is also exposed.
 
 ```html
-<li decorator="active:app.some-state">
+<li as-active="'app.some-state', { parameter: 'somevalue' }, 'totally-active">
 	<a href="{{ makePath('app.some-state') }}">Some state</a>
 </li>
 ```

@@ -1,13 +1,9 @@
-var extend = require('xtend')
-
-var UPDATE_ROUTE_KEY = 'update_route'
+const UPDATE_ROUTE_KEY = 'update_route'
 
 function wrapWackyPromise(promise, cb) {
-	promise.then(function() {
-		cb()
-	}, function(err) {
-		cb(err)
-	})
+	promise.then((...args) => {
+		cb(null, ...args)
+	}, cb)
 }
 
 module.exports = function RactiveStateRouter(Ractive, ractiveOptions, options) {
@@ -19,13 +15,13 @@ module.exports = function RactiveStateRouter(Ractive, ractiveOptions, options) {
 		}
 	}
 	return function makeRenderer(stateRouter) {
-		var ExtendedRactive = Ractive.extend(ractiveOptions || {})
-		var extendedData = ExtendedRactive.defaults.data
-		var ractiveData = Ractive.defaults.data
+		const ExtendedRactive = Ractive.extend(ractiveOptions || {})
+		const extendedData = ExtendedRactive.defaults.data
+		const ractiveData = Ractive.defaults.data
 
 		const globalData = {}
 		globalData[UPDATE_ROUTE_KEY] = {}
-		var globalRactive = new Ractive({
+		const globalRactive = new Ractive({
 			data: globalData
 		})
 
@@ -38,31 +34,33 @@ module.exports = function RactiveStateRouter(Ractive, ractiveOptions, options) {
 			return stateRouter.makePath.apply(null, arguments)
 		}
 
-		extendedData.active = ractiveData.active = function active(stateName) {
+		extendedData.active = ractiveData.active = function active(stateName, options, className = 'active') {
 			globalRactive.get(UPDATE_ROUTE_KEY)
-			return stateRouter.stateIsActive(stateName) ? 'active' : ''
+			return stateRouter.stateIsActive(stateName, options) ? className : ''
 		}
+
+		const activeDecorator = makeStateIsActiveDecorator(stateRouter)
 
 		return {
 			render: function render(context, cb) {
-				var element = context.element
-				var inputTemplate = context.template
+				const element = context.element
+				const inputTemplate = context.template
 
-				var defaultDecorators = {
-					active: activeStateDecarator.bind(null, stateRouter)
+				const defaultDecorators = {
+					active: activeDecorator
 				}
 
 				function getData() {
-					var copyOfContent = copyIfAppropriate(context.content)
-					return isTemplate(inputTemplate) ? copyOfContent : extend(inputTemplate.data, copyOfContent)
+					const copyOfContent = copyIfAppropriate(context.content)
+					return isTemplate(inputTemplate) ? copyOfContent : Object.assign({}, inputTemplate.data, copyOfContent)
 				}
 				function getDecorators() {
-					return isTemplate(inputTemplate) ? defaultDecorators : extend(defaultDecorators, inputTemplate.decorators)
+					return isTemplate(inputTemplate) ? defaultDecorators : Object.assign(defaultDecorators, inputTemplate.decorators)
 				}
 				function getOptions() {
-					var bareOptions = isTemplate(inputTemplate) ? { template: inputTemplate } : inputTemplate
+					const bareOptions = isTemplate(inputTemplate) ? { template: inputTemplate } : inputTemplate
 
-					return extend(bareOptions, {
+					return Object.assign({}, bareOptions, {
 						decorators: getDecorators(),
 						data: getData(),
 						el: element
@@ -70,14 +68,14 @@ module.exports = function RactiveStateRouter(Ractive, ractiveOptions, options) {
 				}
 
 				try {
-					var ractive = new ExtendedRactive(getOptions())
+					const ractive = new ExtendedRactive(getOptions())
 					cb(null, ractive)
 				} catch (e) {
 					cb(e)
 				}
 			},
 			reset: function reset(context, cb) {
-				var ractive = context.domApi
+				const ractive = context.domApi
 				ractive.off()
 				wrapWackyPromise(ractive.reset(copyIfAppropriate(context.content)), cb)
 			},
@@ -86,7 +84,7 @@ module.exports = function RactiveStateRouter(Ractive, ractiveOptions, options) {
 			},
 			getChildElement: function getChildElement(ractive, cb) {
 				try {
-					var child = ractive.find('ui-view')
+					const child = ractive.find('ui-view')
 					cb(null, child)
 				} catch (e) {
 					cb(e)
@@ -100,7 +98,7 @@ function copy(value) {
 	if (Array.isArray(value)) {
 		return value.map(copy)
 	} else if (object(value)) {
-		var target = {}
+		const target = {}
 		Object.keys(value).forEach(function(key) {
 			target[key] = copy(value[key])
 		})
@@ -114,39 +112,27 @@ function object(o) {
 	return o && typeof o === 'object'
 }
 
-function activeStateDecarator(stateRouter, element, stateName) {
-	var parametersToMatch = parseParameters(arguments)
-	function onStateChange() {
-		var active = stateRouter.stateIsActive(stateName, parametersToMatch)
-
-		if (active) {
-			element.classList.add('active')
-		} else {
-			element.classList.remove('active')
+function makeStateIsActiveDecorator(stateRouter) {
+	return function activeDecorator(node, stateName, options, className = 'active') {
+		function applyCurrentState() {
+			if (stateRouter.stateIsActive(stateName, options)) {
+				node.classList.add(className)
+			} else {
+				node.classList.remove(className)
+			}
 		}
 
-	}
+		stateRouter.on('stateChangeEnd', applyCurrentState)
 
-	stateRouter.on('stateChangeEnd', onStateChange)
-
-	function teardown() {
-		stateRouter.removeListener('stateChangeEnd', onStateChange)
-	}
-
-	return {
-		teardown: teardown
-	}
-}
-
-function parseParameters(args) {
-	args = Array.prototype.slice.call(args, 2)
-	return args.reduce(function(allParameters, parameterPair) {
-		var keyAndValue = parameterPair.split(':')
-		if (keyAndValue.length > 1) {
-			allParameters[keyAndValue[0]] = keyAndValue[1]
+		function teardown() {
+			stateRouter.removeListener('stateChangeEnd', applyCurrentState)
+			node.classList.remove(className)
 		}
-		return allParameters
-	}, {})
+
+		return {
+			teardown
+		}
+	}
 }
 
 function isTemplate(inputTemplate) {
