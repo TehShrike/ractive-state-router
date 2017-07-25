@@ -57,7 +57,7 @@ The `active` decorator adds the `active` class to an element if the given state 
 The `makePath` function [from the abstract-state-router](https://github.com/TehShrike/abstract-state-router#stateroutermakepathstatename-stateparameters-options) is also exposed.
 
 ```html
-<li as-active="'app.some-state', { parameter: 'somevalue' }, 'totally-active">
+<li as-active="'app.some-state', { parameter: 'somevalue' }, 'totally-active'">
 	<a href="{{ makePath('app.some-state') }}">Some state</a>
 </li>
 ```
