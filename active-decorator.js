@@ -1,5 +1,5 @@
 module.exports = function makeStateIsActiveDecorator(stateRouter) {
-	return function activeDecorator(node, stateName, options, className = 'active') {
+	return function activeDecorator(node, stateName, options, className = `active`) {
 		function applyCurrentState() {
 			if (stateRouter.stateIsActive(stateName, options)) {
 				node.classList.add(className)
@@ -8,15 +8,15 @@ module.exports = function makeStateIsActiveDecorator(stateRouter) {
 			}
 		}
 
-		stateRouter.on('stateChangeEnd', applyCurrentState)
+		stateRouter.on(`stateChangeEnd`, applyCurrentState)
 
 		function teardown() {
-			stateRouter.removeListener('stateChangeEnd', applyCurrentState)
+			stateRouter.removeListener(`stateChangeEnd`, applyCurrentState)
 			node.classList.remove(className)
 		}
 
 		return {
-			teardown
+			teardown,
 		}
 	}
 }

@@ -1,6 +1,6 @@
-const makeStateIsActiveDecorator = require('./active-decorator')
+const makeStateIsActiveDecorator = require(`./active-decorator`)
 
-const UPDATE_ROUTE_KEY = 'update_route'
+const UPDATE_ROUTE_KEY = `update_route`
 
 function wrapWackyPromise(promise, cb) {
 	promise.then((...args) => {
@@ -24,10 +24,10 @@ module.exports = function RactiveStateRouter(Ractive, ractiveOptions, options) {
 		const globalData = {}
 		globalData[UPDATE_ROUTE_KEY] = {}
 		const globalRactive = new Ractive({
-			data: globalData
+			data: globalData,
 		})
 
-		stateRouter.on('stateChangeEnd', function() {
+		stateRouter.on(`stateChangeEnd`, () => {
 			globalRactive.update(UPDATE_ROUTE_KEY)
 		})
 
@@ -36,9 +36,9 @@ module.exports = function RactiveStateRouter(Ractive, ractiveOptions, options) {
 			return stateRouter.makePath.apply(null, arguments)
 		}
 
-		extendedData.active = ractiveData.active = function active(stateName, options, className = 'active') {
+		extendedData.active = ractiveData.active = function active(stateName, options, className = `active`) {
 			globalRactive.get(UPDATE_ROUTE_KEY)
-			return stateRouter.stateIsActive(stateName, options) ? className : ''
+			return stateRouter.stateIsActive(stateName, options) ? className : ``
 		}
 
 		const activeDecorator = makeStateIsActiveDecorator(stateRouter)
@@ -49,7 +49,7 @@ module.exports = function RactiveStateRouter(Ractive, ractiveOptions, options) {
 				const inputTemplate = context.template
 
 				const defaultDecorators = {
-					active: activeDecorator
+					active: activeDecorator,
 				}
 
 				function getData() {
@@ -65,7 +65,7 @@ module.exports = function RactiveStateRouter(Ractive, ractiveOptions, options) {
 					return Object.assign({}, bareOptions, {
 						decorators: getDecorators(),
 						data: getData(),
-						el: element
+						el: element,
 					})
 				}
 
@@ -86,12 +86,12 @@ module.exports = function RactiveStateRouter(Ractive, ractiveOptions, options) {
 			},
 			getChildElement: function getChildElement(ractive, cb) {
 				try {
-					const child = ractive.find('ui-view')
+					const child = ractive.find(`ui-view`)
 					cb(null, child)
 				} catch (e) {
 					cb(e)
 				}
-			}
+			},
 		}
 	}
 }
@@ -101,7 +101,7 @@ function copy(value) {
 		return value.map(copy)
 	} else if (object(value)) {
 		const target = {}
-		Object.keys(value).forEach(function(key) {
+		Object.keys(value).forEach(key => {
 			target[key] = copy(value[key])
 		})
 		return target
@@ -111,14 +111,14 @@ function copy(value) {
 }
 
 function object(o) {
-	return o && typeof o === 'object'
+	return o && typeof o === `object`
 }
 
 function isTemplate(inputTemplate) {
-	return typeof inputTemplate === 'string' || isRactiveTemplateObject(inputTemplate)
+	return typeof inputTemplate === `string` || isRactiveTemplateObject(inputTemplate)
 }
 
 function isRactiveTemplateObject(template) {
 	// Based on https://github.com/ractivejs/ractive/blob/b1c9e1e5c22daac3210ee7db0f511065b31aac3c/src/Ractive/config/custom/template/template.js#L113-L116
-	return template && typeof template.v === 'number'
+	return template && typeof template.v === `number`
 }
