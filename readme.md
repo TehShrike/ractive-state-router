@@ -8,7 +8,7 @@ npm + your favorite CommonJS bundler is easiest.
 npm install ractive-state-router
 ```
 
-You can also [download the stand-alone build from wzrd.in](https://wzrd.in/standalone/ractive-state-router@latest).  If you include it in a `<script>` tag, a `ractiveStateRouter` function will be available on the global scope.
+You can also [download the stand-alone build from bundle.run](https://bundle.run/ractive-state-router@latest).  If you include it in a `<script>` tag, a `ractiveStateRouter` function will be available on the global scope.
 
 ## Breaking changes
 
