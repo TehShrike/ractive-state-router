@@ -20,19 +20,5 @@
     "url": "https://github.com/TehShrike/ractive-state-router/issues"
   },
   "homepage": "https://github.com/TehShrike/ractive-state-router",
-  "dependencies": {},
-  "devDependencies": {
-    "babel-preset-es2015": "6.14.0",
-    "babelify": "7.3.0"
-  },
-  "browserify": {
-    "transform": [
-      [
-        "babelify",
-        {
-          "presets": "es2015"
-        }
-      ]
-    ]
-  }
+  "dependencies": {}
 }
