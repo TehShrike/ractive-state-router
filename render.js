@@ -79,6 +79,9 @@ module.exports = function RactiveStateRouter(Ractive, ractiveOptions, options) {
 			reset: function reset(context, cb) {
 				const ractive = context.domApi
 				ractive.off()
+				if(ractive._observers && Array.isArray(ractive._observers)) {
+					ractive._observers.forEach(o => o.cancel())
+				}
 				wrapWackyPromise(ractive.reset(copyIfAppropriate(context.content)), cb)
 			},
 			destroy: function destroy(ractive, cb) {
